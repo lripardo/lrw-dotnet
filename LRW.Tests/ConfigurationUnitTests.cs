@@ -6,10 +6,7 @@ namespace LRW.Tests;
 
 public class ConfigurationUnitTests
 {
-    public class KeyWithNoValidation(string name = "TEST", string defaultValue = "TEST") : Key(name, defaultValue)
-    {
-        public override string[] Documentation => [];
-    }
+    private class KeyWithNoValidation(string name = "TEST", string defaultValue = "TEST") : Key(name, defaultValue, []);
 
     [Theory]
     [InlineData("A")]
@@ -56,12 +53,10 @@ public class ConfigurationUnitTests
 
     public class KeyWithRequiredValidation : Key
     {
-        public KeyWithRequiredValidation() : base("TEST", "")
+        public KeyWithRequiredValidation() : base("TEST", "", [])
         {
             RuleFor(x => x.String).NotEmpty();
         }
-
-        public override string[] Documentation => [];
     }
 
     [Fact]
@@ -151,6 +146,56 @@ public class ConfigurationUnitTests
         A.CallTo(() => source.Get(key.Name)).MustHaveHappenedOnceExactly();
     }
 
+    public class KeyWithNumberValidation : Key
+    {
+        public KeyWithNumberValidation() : base("TEST", "1", [])
+        {
+            RuleFor(x => x.Int).GreaterThan(0).LessThan(100);
+        }
+    }
+
+    [Theory]
+    [InlineData("One")]
+    [InlineData("1.34e28")]
+    [InlineData("-26.87")]
+    [InlineData("1601.9")]
+    [InlineData("2147483648")]
+    public void Int_KeyConfiguration_ThrowValidationException_WhenNotAInteger(string value)
+    {
+        //Arrange
+        var key = new KeyWithNumberValidation();
+        var source = A.Fake<IConfigSource>();
+
+        A.CallTo(() => source.Get(key.Name)).Returns(value);
+
+        var keyConfiguration = new KeyConfiguration(source);
+
+        //Assert
+        Assert.Throws<ValidationException>(() => keyConfiguration[key]);
+        A.CallTo(() => source.Get(key.Name)).MustHaveHappenedOnceExactly();
+    }
+
+    [Theory]
+    [InlineData("0")]
+    [InlineData(" 0")]
+    [InlineData("-1")]
+    [InlineData("101")]
+    [InlineData("2147483647")]
+    public void Int_KeyConfiguration_ThrowValidationException_WhenIntegerNotMatchRule(string value)
+    {
+        //Arrange
+        var key = new KeyWithNumberValidation();
+        var source = A.Fake<IConfigSource>();
+
+        A.CallTo(() => source.Get(key.Name)).Returns(value);
+
+        var keyConfiguration = new KeyConfiguration(source);
+
+        //Assert
+        Assert.Throws<ValidationException>(() => keyConfiguration[key]);
+        A.CallTo(() => source.Get(key.Name)).MustHaveHappenedOnceExactly();
+    }
+
     [Theory]
     [InlineData("[\"A\"]")]
     [InlineData("[\"A\", \"B\"]")]
@@ -169,6 +214,34 @@ public class ConfigurationUnitTests
 
         //Assert
         Assert.NotEmpty(result.Strings);
+        A.CallTo(() => source.Get(key.Name)).MustHaveHappenedOnceExactly();
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("[")]
+    [InlineData("string")]
+    [InlineData("{}")]
+    [InlineData("{\"A\", \"B\"}")]
+    [InlineData("{\"A\": [{ \"B\" }]")]
+    [InlineData("[{}, {}, {}]")]
+    [InlineData("[1, 2, 3, 4, 5]")]
+    [InlineData("[\"A\", \"B\", 3]")]
+    public void Strings_KeyConfiguration_ThrowValidationException_WhenInvalidJsonStringArray(string value)
+    {
+        //Arrange
+        var key = new KeyWithNoValidation(defaultValue: "");
+        var source = A.Fake<IConfigSource>();
+
+        A.CallTo(() => source.Get(key.Name)).Returns(value);
+
+        var keyConfiguration = new KeyConfiguration(source);
+
+        //Act
+        var result = keyConfiguration[key];
+
+        //Assert
+        Assert.Throws<ValidationException>(() => result.Strings);
         A.CallTo(() => source.Get(key.Name)).MustHaveHappenedOnceExactly();
     }
 }
