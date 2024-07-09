@@ -1,7 +1,6 @@
 using FakeItEasy;
 using FluentValidation;
 using LRW.Configuration;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace LRW.Tests;
 
