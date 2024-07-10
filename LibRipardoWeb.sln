@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LRW", "LRW.Core\LRW.csproj", "{B0EC967A-6C96-4C97-AEB4-882427D26F9D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LRW.Tests", "LRW.Tests\LRW.Tests.csproj", "{118FC238-FD0B-46F6-8E38-232E2EF55E22}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LRW.Tests", "LRW.Tests\LRW.Tests.csproj", "{118FC238-FD0B-46F6-8E38-232E2EF55E22}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
