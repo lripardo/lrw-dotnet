@@ -9,7 +9,7 @@ public static class EnvExampleBuilder
     {
         var implementations = assembly.DefinedTypes.Where(t => t.IsSubclassOf(typeof(Key)));
         var builder = new StringBuilder($"# Automatically generated file, do not edit.");
-        
+
         builder.Append(newLine);
         builder.Append(newLine);
 
@@ -24,8 +24,8 @@ public static class EnvExampleBuilder
             }
 
             builder.Append($"{key.Name}={key.DefaultValue}");
-            
-        builder.Append(newLine);
+
+            builder.Append(newLine);
             builder.Append(newLine);
         }
 
