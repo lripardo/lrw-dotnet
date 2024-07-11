@@ -5,6 +5,7 @@ namespace LRW.Tests;
 
 public class HelpersUnitTests
 {
+    #region JsonHelper
     [Fact]
     public void Serialize_Helpers_ReturnSnakeCaseJsonString()
     {
@@ -49,4 +50,5 @@ public class HelpersUnitTests
     {
         Assert.Throws<JsonException>(() => JsonHelper.Deserialize<object?>(value));
     }
+    #endregion
 }
