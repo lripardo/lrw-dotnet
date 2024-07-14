@@ -1,8 +1,8 @@
 ﻿using FluentValidation;
 
-namespace LRW.Configuration;
+namespace LRW.Core.Configuration;
 
-public sealed class KeyConfiguration(IConfigSource source) : IKeyConfiguration
+public sealed class FluentKeyConfiguration(IConfigSource source) : IKeyConfiguration
 {
     private readonly IConfigSource _source = source;
 

@@ -1,8 +1,8 @@
 ﻿using FluentValidation;
-using LRW.Helpers;
+using LRW.Core.Helpers;
 using System.Reflection;
 
-namespace LRW.Configuration;
+namespace LRW.Core.Configuration;
 
 public class Value(string value)
 {
@@ -21,6 +21,7 @@ public class Value(string value)
         {
             var validationException = new ValidationException($"Cannot convert value {input} to {typeof(T).Name}");
 
+            //TODO: FluentValidation must implements inner exception constructor to avoid this reflection
             typeof(Exception)?.GetField("_innerException", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(validationException, ex);
 
             throw validationException;

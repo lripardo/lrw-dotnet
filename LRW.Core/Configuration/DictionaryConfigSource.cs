@@ -1,8 +1,8 @@
-﻿namespace LRW.Configuration;
+﻿namespace LRW.Core.Configuration;
 
-public class DictionaryConfigSource(Dictionary<string, string>? config = null) : IConfigSource
+public class DictionaryConfigSource(Dictionary<string, string> config) : IConfigSource
 {
-    public Dictionary<string, string> Config { get; set; } = config ?? [];
+    public Dictionary<string, string> Config { get; set; } = config;
 
     public string Get(string key)
     {

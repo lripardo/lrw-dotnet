@@ -1,13 +1,10 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System.Reflection;
-using System.Text;
+﻿using System.Text;
 
-namespace LRW.Configuration;
+namespace LRW.Core.Configuration;
 
 public static class EnvExampleBuilder
 {
     private static readonly Type Key = typeof(Key);
-    private static readonly char UnixNewLine = '\n';
 
     public static string Build(IEnumerable<Type> implementations, char newLine)
     {
@@ -36,19 +33,5 @@ public static class EnvExampleBuilder
         }
 
         return builder.ToString();
-    }
-
-    public static string BuildUnix(Assembly assembly)
-    {
-        var implementations = assembly.DefinedTypes.Where(t => t.IsSubclassOf(Key));
-
-        return Build(implementations, UnixNewLine);
-    }
-
-    public static string BuildUnix(IServiceCollection services)
-    {
-        var implementations = services.Where(s => !s.IsKeyedService && s.ImplementationType != null && s.ImplementationType.IsSubclassOf(Key)).Select(s => s.ImplementationType!);
-
-        return Build(implementations, UnixNewLine);
     }
 }

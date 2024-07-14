@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace LRW.Helpers;
+namespace LRW.Core.Helpers;
 
 public static class JsonHelper
 {

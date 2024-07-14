@@ -1,6 +1,6 @@
 using FakeItEasy;
 using FluentValidation;
-using LRW.Configuration;
+using LRW.Core.Configuration;
 
 namespace LRW.Tests;
 

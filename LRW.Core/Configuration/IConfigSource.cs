@@ -1,4 +1,4 @@
-﻿namespace LRW.Configuration;
+﻿namespace LRW.Core.Configuration;
 
 public interface IConfigSource
 {

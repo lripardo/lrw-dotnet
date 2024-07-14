@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using System.Text.RegularExpressions;
 
-namespace LRW.Configuration;
+namespace LRW.Core.Configuration;
 
 public abstract partial class Key : AbstractValidator<Value>
 {

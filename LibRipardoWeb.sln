@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LRW", "LRW.Core\LRW.csproj", "{B0EC967A-6C96-4C97-AEB4-882427D26F9D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LRW.Core", "LRW.Core\LRW.Core.csproj", "{B0EC967A-6C96-4C97-AEB4-882427D26F9D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LRW.Tests", "LRW.Tests\LRW.Tests.csproj", "{118FC238-FD0B-46F6-8E38-232E2EF55E22}"
 EndProject
@@ -11,8 +11,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LRW.Generator", "LRW.Generator\LRW.Generator.csproj", "{60333F47-795A-4A41-B00B-A55C49A5E17E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -28,10 +26,6 @@ Global
 		{118FC238-FD0B-46F6-8E38-232E2EF55E22}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{118FC238-FD0B-46F6-8E38-232E2EF55E22}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{118FC238-FD0B-46F6-8E38-232E2EF55E22}.Release|Any CPU.Build.0 = Release|Any CPU
-		{60333F47-795A-4A41-B00B-A55C49A5E17E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{60333F47-795A-4A41-B00B-A55C49A5E17E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{60333F47-795A-4A41-B00B-A55C49A5E17E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{60333F47-795A-4A41-B00B-A55C49A5E17E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
