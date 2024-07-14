@@ -2,7 +2,7 @@
 
 namespace LRW.Core.Configuration;
 
-public sealed class FluentKeyConfiguration(IConfigSource source) : IKeyConfiguration
+public sealed class KeyConfiguration(IConfigSource source) : IKeyConfiguration
 {
     private readonly IConfigSource _source = source;
 
