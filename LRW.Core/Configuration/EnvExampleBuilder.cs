@@ -17,7 +17,9 @@ public static class EnvExampleBuilder
         {
             if (implementation.IsSubclassOf(Key))
             {
-                var key = (Key?)Activator.CreateInstance(implementation) ?? throw new Exception($"Cannot create Key instance from type {implementation.FullName} because Activator.CreateInstance() return null");
+                var key =
+                    (Key?)Activator.CreateInstance(implementation)
+                    ?? throw new Exception($"Cannot create Key instance from type {implementation.FullName} because Activator.CreateInstance() return null");
 
                 foreach (var documentation in key.Documentation)
                 {

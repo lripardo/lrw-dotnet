@@ -1,5 +1,5 @@
-﻿using FluentValidation;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
+using FluentValidation;
 
 namespace LRW.Core.Configuration;
 

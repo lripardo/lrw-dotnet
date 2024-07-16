@@ -1,6 +1,6 @@
-﻿using FluentValidation;
+﻿using System.Reflection;
+using FluentValidation;
 using LRW.Core.Helpers;
-using System.Reflection;
 
 namespace LRW.Core.Configuration;
 

@@ -1,5 +1,5 @@
-﻿using LRW.Core.Helpers;
-using System.Text.Json;
+﻿using System.Text.Json;
+using LRW.Core.Helpers;
 
 namespace LRW.Tests;
 
@@ -10,7 +10,15 @@ public class HelpersUnitTests
     public void Serialize_Helpers_ReturnSnakeCaseJsonString()
     {
         //Arrange
-        var obj = new { TestA = "Test", TestB = 2, TestC = 0.8, TestD = true, TestE = new { TestA = "Test" }, TestF = new string[2] { "A", "B" } };
+        var obj = new
+        {
+            TestA = "Test",
+            TestB = 2,
+            TestC = 0.8,
+            TestD = true,
+            TestE = new { TestA = "Test" },
+            TestF = new string[2] { "A", "B" }
+        };
         var expected = "{\"test_a\":\"Test\",\"test_b\":2,\"test_c\":0.8,\"test_d\":true,\"test_e\":{\"test_a\":\"Test\"},\"test_f\":[\"A\",\"B\"]}";
 
         //Act

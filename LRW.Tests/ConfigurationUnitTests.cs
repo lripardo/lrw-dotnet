@@ -7,11 +7,13 @@ namespace LRW.Tests;
 public class ConfigurationUnitTests
 {
     #region Keys Definitions
+
     private class KeyWithNoValidation(string name = "TEST", string defaultValue = "TEST") : Key(name, defaultValue, []);
 
     private class KeyWithRequiredValidation : Key
     {
-        public KeyWithRequiredValidation() : base("TEST", "", [])
+        public KeyWithRequiredValidation()
+            : base("TEST", "", [])
         {
             RuleFor(x => x.String).NotEmpty();
         }
@@ -19,17 +21,21 @@ public class ConfigurationUnitTests
 
     private class KeyWithNumberValidation : Key
     {
-        public KeyWithNumberValidation() : base("TEST", "1", [])
+        public KeyWithNumberValidation()
+            : base("TEST", "1", [])
         {
             RuleFor(x => x.Int).GreaterThan(0).LessThan(100);
         }
     }
 
     private class FakeKey1() : Key("FAKE_KEY_ONE", "1", ["This is a fake key number 1"]);
+
     private class FakeKey2() : Key("FAKE_KEY_TWO", "2", ["This is a fake key number 2", "And key number 2 has another documentation"]);
+
     #endregion
 
     #region Key
+
     [Theory]
     [InlineData("A")]
     [InlineData("A_B")]
@@ -53,9 +59,11 @@ public class ConfigurationUnitTests
     {
         Assert.Throws<ArgumentException>(() => new KeyWithNoValidation(name));
     }
+
     #endregion
 
     #region KeyConfiguration
+
     [Fact]
     public void String_KeyConfiguration_GetDefaultValue_WhenSourceNotFoundKey()
     {
@@ -123,7 +131,7 @@ public class ConfigurationUnitTests
     [InlineData("null")]
     [InlineData("true ")]
     [InlineData(" true")]
-    public void Bool_KeyConfiguration_ReturnsFasle_WhenAnyStringOtherThanTrue(string value)
+    public void Bool_KeyConfiguration_ReturnsFalse_WhenAnyStringOtherThanTrue(string value)
     {
         //Arrange
         var key = new KeyWithNoValidation();
@@ -252,19 +260,22 @@ public class ConfigurationUnitTests
         Assert.Throws<ValidationException>(() => result.Strings);
         A.CallTo(() => source.Get(key.Name)).MustHaveHappenedOnceExactly();
     }
+
     #endregion
 
     #region EnvExampleBuilder
+
     [Fact]
     public void BuildUnix_EnvExampleBuilder_ReturnsCorrectStringForEnvExampleFileContent()
     {
         //Arrange
-        var expectedText = "# Automatically generated file, do not edit.\n\n"
-                        + "# This is a fake key number 1\n"
-                        + "FAKE_KEY_ONE=1\n\n"
-                        + "# This is a fake key number 2\n"
-                        + "# And key number 2 has another documentation\n"
-                        + "FAKE_KEY_TWO=2\n\n";
+        var expectedText =
+            "# Automatically generated file, do not edit.\n\n"
+            + "# This is a fake key number 1\n"
+            + "FAKE_KEY_ONE=1\n\n"
+            + "# This is a fake key number 2\n"
+            + "# And key number 2 has another documentation\n"
+            + "FAKE_KEY_TWO=2\n\n";
 
         //Act
         var envFileContent = EnvExampleBuilder.Build([typeof(FakeKey1), typeof(FakeKey2)], '\n');
@@ -272,5 +283,6 @@ public class ConfigurationUnitTests
         //Assert
         Assert.Equal(expectedText, envFileContent);
     }
+
     #endregion
 }
