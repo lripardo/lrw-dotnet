@@ -17,9 +17,10 @@ public class HelpersUnitTests
             TestC = 0.8,
             TestD = true,
             TestE = new { TestA = "Test" },
-            TestF = new string[2] { "A", "B" }
+            TestF = new[] { "A", "B" }
         };
-        var expected = "{\"test_a\":\"Test\",\"test_b\":2,\"test_c\":0.8,\"test_d\":true,\"test_e\":{\"test_a\":\"Test\"},\"test_f\":[\"A\",\"B\"]}";
+
+        const string expected = "{\"test_a\":\"Test\",\"test_b\":2,\"test_c\":0.8,\"test_d\":true,\"test_e\":{\"test_a\":\"Test\"},\"test_f\":[\"A\",\"B\"]}";
 
         //Act
         var result = JsonHelper.Serialize(obj);
