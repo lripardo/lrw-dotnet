@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using LRW.Core.Helpers;
 
-namespace LRW.Tests;
+namespace LRW.Tests.Core;
 
 public class HelpersUnitTests
 {
@@ -33,7 +33,7 @@ public class HelpersUnitTests
     public void Deserialize_Helpers_ReturnObject()
     {
         //Arrange
-        var obj = "{\"test_a\":\"Test\",\"test_b\":2,\"test_c\":0.8,\"test_d\":true,\"test_e\":{\"test_a\":\"Test\"},\"test_f\":[\"A\",\"B\"]}";
+        const string obj = "{\"test_a\":\"Test\",\"test_b\":2,\"test_c\":0.8,\"test_d\":true,\"test_e\":{\"test_a\":\"Test\"},\"test_f\":[\"A\",\"B\"]}";
 
         //Act
         var result = JsonHelper.Deserialize<JsonDocument>(obj);

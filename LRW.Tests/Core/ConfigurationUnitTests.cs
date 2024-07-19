@@ -2,7 +2,7 @@ using FakeItEasy;
 using FluentValidation;
 using LRW.Core.Configuration;
 
-namespace LRW.Tests;
+namespace LRW.Tests.Core;
 
 public class ConfigurationUnitTests
 {
@@ -269,8 +269,8 @@ public class ConfigurationUnitTests
     public void BuildUnix_EnvExampleBuilder_ReturnsCorrectStringForEnvExampleFileContent()
     {
         //Arrange
-        var expectedText =
-            "# Automatically generated file, do not edit.\n\n"
+        const string expectedText = ""
+            + "# Automatically generated file, do not edit.\n\n"
             + "# This is a fake key number 1\n"
             + "FAKE_KEY_ONE=1\n\n"
             + "# This is a fake key number 2\n"
