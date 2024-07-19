@@ -278,7 +278,7 @@ public class ConfigurationUnitTests
             + "FAKE_KEY_TWO=2\n\n";
 
         //Act
-        var envFileContent = EnvExampleBuilder.Build([typeof(FakeKey1), typeof(FakeKey2)], '\n');
+        var envFileContent = EnvExampleBuilder.Build([typeof(FakeKey1), typeof(FakeKey2)], "\n");
 
         //Assert
         Assert.Equal(expectedText, envFileContent);
