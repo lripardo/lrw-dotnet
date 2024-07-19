@@ -8,14 +8,14 @@ public sealed class KeyConfiguration(IConfigSource source) : IKeyConfiguration
     {
         get
         {
-            var src = source.Get(key.Name);
+            var valueString = source.Get(key.Name);
 
-            if (string.IsNullOrEmpty(src))
+            if (string.IsNullOrEmpty(valueString))
             {
-                src = key.DefaultValue;
+                valueString = key.DefaultValue;
             }
 
-            var value = new Value(src);
+            var value = new Value(valueString);
 
             key.ValidateAndThrow(value);
 

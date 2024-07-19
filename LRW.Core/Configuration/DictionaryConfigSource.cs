@@ -1,6 +1,6 @@
 ﻿namespace LRW.Core.Configuration;
 
-public class DictionaryConfigSource(Dictionary<string, string> config) : IConfigSource
+public sealed class DictionaryConfigSource(Dictionary<string, string> config) : IConfigSource
 {
     public string Get(string key)
     {

@@ -1,6 +1,6 @@
 ﻿namespace LRW.Core.Configuration;
 
-public class EnvVarConfigSource : IConfigSource
+public sealed class EnvVarConfigSource : IConfigSource
 {
     public string Get(string key)
     {
