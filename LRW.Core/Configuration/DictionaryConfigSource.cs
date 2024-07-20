@@ -6,4 +6,9 @@ public sealed class DictionaryConfigSource(Dictionary<string, string> config) : 
     {
         return config[key];
     }
+
+    public Task<string> GetAsync(string key)
+    {
+        return Task.FromResult(Get(key));
+    }
 }

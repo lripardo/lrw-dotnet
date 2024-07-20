@@ -6,4 +6,9 @@ public sealed class EnvVarConfigSource : IConfigSource
     {
         return Environment.GetEnvironmentVariable(key) ?? "";
     }
+
+    public Task<string> GetAsync(string key)
+    {
+        return Task.FromResult(Get(key));
+    }
 }

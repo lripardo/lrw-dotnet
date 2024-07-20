@@ -1,10 +1,11 @@
 ﻿using System.Text;
+using LRW.Core.Configuration;
 
-namespace LRW.Core.Configuration;
+namespace LRW.Core.Helpers;
 
 public static class EnvExampleBuilder
 {
-    public static string Build(IEnumerable<Type> implementations, string newLine)
+    public static string GetFileContent(IEnumerable<Type> implementations, string newLine)
     {
         var builder = new StringBuilder($"# Automatically generated file, do not edit.{newLine}{newLine}");
 

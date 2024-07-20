@@ -4,7 +4,7 @@ using LRW.Core.Configuration;
 
 namespace LRW.Tests.Core;
 
-public class ConfigurationUnitTests
+public class ConfigurationTests
 {
     #region Keys Definitions
 
@@ -13,7 +13,7 @@ public class ConfigurationUnitTests
     private class KeyWithRequiredValidation : Key
     {
         public KeyWithRequiredValidation()
-            : base("TEST", "", [])
+            : base("TEST", "")
         {
             RuleFor(x => x.String).NotEmpty();
         }
@@ -22,15 +22,11 @@ public class ConfigurationUnitTests
     private class KeyWithNumberValidation : Key
     {
         public KeyWithNumberValidation()
-            : base("TEST", "1", [])
+            : base("TEST", "1")
         {
             RuleFor(x => x.Int).GreaterThan(0).LessThan(100);
         }
     }
-
-    private class FakeKey1() : Key("FAKE_KEY_ONE", "1", ["This is a fake key number 1"]);
-
-    private class FakeKey2() : Key("FAKE_KEY_TWO", "2", ["This is a fake key number 2", "And key number 2 has another documentation"]);
 
     #endregion
 
@@ -259,29 +255,6 @@ public class ConfigurationUnitTests
         //Assert
         Assert.Throws<ValidationException>(() => result.Strings);
         A.CallTo(() => source.Get(key.Name)).MustHaveHappenedOnceExactly();
-    }
-
-    #endregion
-
-    #region EnvExampleBuilder
-
-    [Fact]
-    public void BuildUnix_EnvExampleBuilder_ReturnsCorrectStringForEnvExampleFileContent()
-    {
-        //Arrange
-        const string expectedText = ""
-            + "# Automatically generated file, do not edit.\n\n"
-            + "# This is a fake key number 1\n"
-            + "FAKE_KEY_ONE=1\n\n"
-            + "# This is a fake key number 2\n"
-            + "# And key number 2 has another documentation\n"
-            + "FAKE_KEY_TWO=2\n\n";
-
-        //Act
-        var envFileContent = EnvExampleBuilder.Build([typeof(FakeKey1), typeof(FakeKey2)], "\n");
-
-        //Assert
-        Assert.Equal(expectedText, envFileContent);
     }
 
     #endregion

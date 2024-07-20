@@ -12,7 +12,7 @@ public abstract partial class Key : AbstractValidator<Value>
     public string DefaultValue { get; }
     public string[] Documentation { get; }
 
-    protected Key(string name, string defaultValue, string[] documentation)
+    protected Key(string name, string defaultValue, string[]? documentation = null)
     {
         if (!NameRegex().IsMatch(name))
         {
@@ -21,6 +21,6 @@ public abstract partial class Key : AbstractValidator<Value>
 
         Name = name;
         DefaultValue = defaultValue;
-        Documentation = documentation;
+        Documentation = documentation ?? [];
     }
 }
