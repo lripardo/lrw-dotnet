@@ -30,12 +30,14 @@ public sealed class RedisFixture : IAsyncLifetime
     }
 }
 
-public sealed class RedisTest(RedisFixture redis) : IClassFixture<RedisFixture>
+public sealed class StackExchangeTests(RedisFixture redis) : IClassFixture<RedisFixture>
 {
+    #region RedisCache
+
     private class TestRedisDatabase(int database, IKeyedConfigRepository<ConnectionMultiplexer> repository) : RedisCache<dynamic>(database, repository);
 
     [Fact]
-    public async Task SetAsync_RedisCache_MustStoreCorrectValueOnRedisServer()
+    public async Task SetAsync_MustStoreCorrectValueOnRedisServer()
     {
         //Arrange
         var proofObject = new { IdTest = 1, NameTest = "Test1", IsEnabled = true, RateTest = 5.0, ArrayTest = new[] { "TEST1", "TEST2" } };
@@ -56,7 +58,7 @@ public sealed class RedisTest(RedisFixture redis) : IClassFixture<RedisFixture>
     }
 
     [Fact]
-    public void Set_RedisCache_MustStoreCorrectValueOnRedisServer()
+    public void Set_MustStoreCorrectValueOnRedisServer()
     {
         //Arrange
         var proofObject = new { IdTest = 2, NameTest = "Test2", IsEnabled = false, RateTest = 10.0, ArrayTest = new[] { "TEST3", "TEST4" } };
@@ -75,4 +77,6 @@ public sealed class RedisTest(RedisFixture redis) : IClassFixture<RedisFixture>
         Assert.Equal("{\"id_test\":2,\"name_test\":\"Test2\",\"is_enabled\":false,\"rate_test\":10,\"array_test\":[\"TEST3\",\"TEST4\"]}", storedValue);
         A.CallTo(() => repository.Instance).MustHaveHappenedOnceExactly();
     }
+
+    #endregion
 }

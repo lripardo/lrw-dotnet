@@ -9,7 +9,7 @@ public class HelpersTests
     #region JsonHelper
 
     [Fact]
-    public void Serialize_Helpers_ReturnSnakeCaseJsonString()
+    public void Serialize_ReturnSnakeCaseJsonString()
     {
         //Arrange
         var obj = new
@@ -33,7 +33,7 @@ public class HelpersTests
     }
 
     [Fact]
-    public void Deserialize_Helpers_ReturnObject()
+    public void Deserialize_ReturnObject()
     {
         //Arrange
         const string obj =
@@ -59,7 +59,7 @@ public class HelpersTests
     [InlineData("")]
     [InlineData("[")]
     [InlineData(" ")]
-    public void Deserialize_Helpers_ThrowExceptionWhenInvalidString(string value)
+    public void Deserialize_ThrowExceptionWhenInvalidString(string value)
     {
         Assert.Throws<JsonException>(() => JsonHelper.Deserialize<object?>(value));
     }
@@ -74,7 +74,7 @@ public class HelpersTests
         ["This is a fake key number 2", "And key number 2 has another documentation"]);
 
     [Fact]
-    public void GetFileContent_EnvExampleBuilder_ReturnsCorrectContentForUnixEndOfLine()
+    public void GetFileContent_ReturnsCorrectContentForUnixEndOfLine()
     {
         //Arrange
         const string expectedText = ""

@@ -37,7 +37,7 @@ public class ConfigurationTests
     [InlineData("A_B")]
     [InlineData("A_B_C")]
     [InlineData("ABC")]
-    public void NewInstanceOf_Key_WhenValidName(string name)
+    public void NewInstance_WhenValidName(string name)
     {
         Assert.Equal(name, new KeyWithNoValidation(name).Name);
     }
@@ -51,17 +51,17 @@ public class ConfigurationTests
     [InlineData("A__")]
     [InlineData("A B")]
     [InlineData(" A")]
-    public void NewInstanceOf_Key_ThrowArgumentException_WhenInvalidName(string name)
+    public void NewInstance_ThrowArgumentException_WhenInvalidName(string name)
     {
         Assert.Throws<ArgumentException>(() => new KeyWithNoValidation(name));
     }
 
     #endregion
 
-    #region KeyedConfiguration
+    #region KeyedConfig
 
     [Fact]
-    public void String_KeyedConfiguration_GetDefaultValue_WhenSourceNotFoundKey()
+    public void String_GetDefaultValue_WhenSourceNotFoundKey()
     {
         //Arrange
         var key = new KeyWithNoValidation();
@@ -80,7 +80,7 @@ public class ConfigurationTests
     }
 
     [Fact]
-    public void String_KeyedConfiguration_ThrowValidationException_WhenNotMatchRules()
+    public void String_ThrowValidationException_WhenNotMatchRules()
     {
         //Arrange
         var key = new KeyWithRequiredValidation();
@@ -101,7 +101,7 @@ public class ConfigurationTests
     [InlineData("True")]
     [InlineData("TrUe")]
     [InlineData("tRuE")]
-    public void Bool_KeyedConfiguration_ReturnsTrue_WhenTrueStringCaseInsensitive(string value)
+    public void Bool_ReturnsTrue_WhenTrueStringCaseInsensitive(string value)
     {
         //Arrange
         var key = new KeyWithNoValidation();
@@ -127,7 +127,7 @@ public class ConfigurationTests
     [InlineData("null")]
     [InlineData("true ")]
     [InlineData(" true")]
-    public void Bool_KeyedConfiguration_ReturnsFalse_WhenAnyStringOtherThanTrue(string value)
+    public void Bool_ReturnsFalse_WhenAnyStringOtherThanTrue(string value)
     {
         //Arrange
         var key = new KeyWithNoValidation();
@@ -148,7 +148,7 @@ public class ConfigurationTests
     [Theory]
     [InlineData("")]
     [InlineData("1")]
-    public void Int_KeyedConfiguration_ReturnsCorrectNumberConversion(string number)
+    public void Int_ReturnsCorrectNumberConversion(string number)
     {
         //Arrange
         var key = new KeyWithNoValidation(defaultValue: "1");
@@ -172,7 +172,7 @@ public class ConfigurationTests
     [InlineData("-26.87")]
     [InlineData("1601.9")]
     [InlineData("2147483648")]
-    public void Int_KeyedConfiguration_ThrowValidationException_WhenNotAInteger(string value)
+    public void Int_ThrowValidationException_WhenNotAInteger(string value)
     {
         //Arrange
         var key = new KeyWithNumberValidation();
@@ -193,7 +193,7 @@ public class ConfigurationTests
     [InlineData("-1")]
     [InlineData("101")]
     [InlineData("2147483647")]
-    public void Int_KeyedConfiguration_ThrowValidationException_WhenIntegerNotMatchRule(string value)
+    public void Int_ThrowValidationException_WhenIntegerNotMatchRule(string value)
     {
         //Arrange
         var key = new KeyWithNumberValidation();
@@ -211,7 +211,7 @@ public class ConfigurationTests
     [Theory]
     [InlineData("[\"A\"]")]
     [InlineData("[\"A\", \"B\"]")]
-    public void Strings_KeyedConfiguration_ReturnsValidStringArray(string json)
+    public void Strings_ReturnsValidStringArray(string json)
     {
         //Arrange
         var key = new KeyWithNoValidation();
@@ -239,7 +239,7 @@ public class ConfigurationTests
     [InlineData("[{}, {}, {}]")]
     [InlineData("[1, 2, 3, 4, 5]")]
     [InlineData("[\"A\", \"B\", 3]")]
-    public void Strings_KeyedConfiguration_ThrowValidationException_WhenInvalidJsonStringArray(string value)
+    public void Strings_ThrowValidationException_WhenInvalidJsonStringArray(string value)
     {
         //Arrange
         var key = new KeyWithNoValidation(defaultValue: "");
@@ -272,7 +272,7 @@ public class ConfigurationTests
     }
 
     [Fact]
-    public void Instance_SingletonKeyedConfig_MustBeSameForAllInstances()
+    public void Instance_Singleton_MustBeSameForAllInstances()
     {
         //Arrange
         var configuration = A.Fake<IKeyedConfig>();
@@ -292,7 +292,7 @@ public class ConfigurationTests
     }
 
     [Fact]
-    public void Instance_TransientKeyedConfig_MustCreateNewInstance()
+    public void Instance_Transient_MustCreateNewInstance()
     {
         //Arrange
         var configuration = A.Fake<IKeyedConfig>();
