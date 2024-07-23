@@ -18,7 +18,7 @@ public abstract class RedisCache<T>(int database, IKeyedConfigRepository<Connect
     {
         var serialized = JsonHelper.Serialize(value);
 
-        connection.Instance.GetDatabase(database).StringSet(key, serialized, duration);
+        connection.Instance.GetDatabase(database).StringSet(key, serialized, duration.Ticks == 0 ? null : duration);
     }
 
     public void Del(string key)

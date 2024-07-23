@@ -1,4 +1,5 @@
 ﻿using DotNet.Testcontainers.Builders;
+using DotNet.Testcontainers.Containers;
 using FakeItEasy;
 using LRW.Cache.StackExchange;
 using LRW.Core.Configuration;
@@ -6,69 +7,72 @@ using StackExchange.Redis;
 
 namespace LRW.IntegrationTests.Cache;
 
-public class RedisTest
+public sealed class RedisFixture : IAsyncLifetime
 {
-    private const int DatabaseNumber = 5;
-    private static readonly TaskFactory TaskFactory = new(CancellationToken.None, TaskCreationOptions.None, TaskContinuationOptions.None, TaskScheduler.Default);
+    public ConnectionMultiplexer Connection { get; private set; } = null!;
 
-    private readonly ConnectionMultiplexer _connection;
+    private readonly IContainer _container = new ContainerBuilder()
+        .WithImage("redis:alpine3.15")
+        .WithPortBinding(6379)
+        .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(6379))
+        .Build();
 
-    public RedisTest()
+    public async Task InitializeAsync()
     {
-        TaskFactory.StartNew(LoadAsync).Unwrap().ConfigureAwait(false).GetAwaiter().GetResult();
+        await _container.StartAsync();
 
-        _connection = ConnectionMultiplexer.Connect(new ConfigurationOptions() { EndPoints = { { "127.0.0.1", 6379 } }, Protocol = RedisProtocol.Resp3 });
+        Connection = await ConnectionMultiplexer.ConnectAsync(new ConfigurationOptions() { EndPoints = { { "127.0.0.1", 6379 } } });
     }
 
-    private static async Task LoadAsync()
+    public Task DisposeAsync()
     {
-        var container = new ContainerBuilder()
-            .WithImage("redis:alpine3.15")
-            .WithPortBinding(6379)
-            .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(6379))
-            .Build();
-
-        await container.StartAsync().ConfigureAwait(false);
+        return _container.DisposeAsync().AsTask();
     }
+}
 
-    private class MyTestJson
-    {
-        public int IdTest { get; set; }
-        public string? NameTest { get; set; }
-        public bool IsEnabled { get; set; }
-        public double RateTest { get; set; }
-        public IEnumerable<string>? ArrayTest { get; set; }
-    }
-
-    private class TestRedisDatabase(IKeyedConfigRepository<ConnectionMultiplexer> source) : RedisCache<MyTestJson>(DatabaseNumber, source);
+public sealed class RedisTest(RedisFixture redis) : IClassFixture<RedisFixture>
+{
+    private class TestRedisDatabase(int database, IKeyedConfigRepository<ConnectionMultiplexer> repository) : RedisCache<dynamic>(database, repository);
 
     [Fact]
     public async Task SetAsync_RedisCache_MustStoreCorrectValueOnRedisServer()
     {
         //Arrange
-        var json1 = new MyTestJson()
-        {
-            IdTest = 1,
-            NameTest = "Test1",
-            IsEnabled = true,
-            RateTest = 5.0,
-            ArrayTest = ["TEST1", "TEST2"]
-        };
+        var proofObject = new { IdTest = 1, NameTest = "Test1", IsEnabled = true, RateTest = 5.0, ArrayTest = new[] { "TEST1", "TEST2" } };
 
-        const string expected = "{\"id_test\":1,\"name_test\":\"Test1\",\"is_enabled\":true,\"rate_test\":5,\"array_test\":[\"TEST1\",\"TEST2\"]}";
+        var repository = A.Fake<IKeyedConfigRepository<ConnectionMultiplexer>>();
+        var cache = new TestRedisDatabase(1, repository);
 
-        var source = A.Fake<IKeyedConfigRepository<ConnectionMultiplexer>>();
-        var redis = new TestRedisDatabase(source);
-
-        A.CallTo(() => source.Instance).Returns(_connection);
+        A.CallTo(() => repository.Instance).Returns(redis.Connection);
 
         //Act
-        await redis.SetAsync("TEST1", json1, TimeSpan.Zero);
+        await cache.SetAsync("TEST1", proofObject, TimeSpan.Zero);
 
-        var storedValue = _connection.GetDatabase(DatabaseNumber).StringGet("TEST1");
+        var storedValue = redis.Connection.GetDatabase(1).StringGet("TEST1");
 
         //Assert
-        Assert.Equal(expected, storedValue);
-        A.CallTo(() => source.Instance).MustHaveHappenedOnceExactly();
+        Assert.Equal("{\"id_test\":1,\"name_test\":\"Test1\",\"is_enabled\":true,\"rate_test\":5,\"array_test\":[\"TEST1\",\"TEST2\"]}", storedValue);
+        A.CallTo(() => repository.Instance).MustHaveHappenedOnceExactly();
+    }
+
+    [Fact]
+    public void Set_RedisCache_MustStoreCorrectValueOnRedisServer()
+    {
+        //Arrange
+        var proofObject = new { IdTest = 2, NameTest = "Test2", IsEnabled = false, RateTest = 10.0, ArrayTest = new[] { "TEST3", "TEST4" } };
+
+        var repository = A.Fake<IKeyedConfigRepository<ConnectionMultiplexer>>();
+        var cache = new TestRedisDatabase(2, repository);
+
+        A.CallTo(() => repository.Instance).Returns(redis.Connection);
+
+        //Act
+        cache.Set("TEST2", proofObject, TimeSpan.Zero);
+
+        var storedValue = redis.Connection.GetDatabase(2).StringGet("TEST2");
+
+        //Assert
+        Assert.Equal("{\"id_test\":2,\"name_test\":\"Test2\",\"is_enabled\":false,\"rate_test\":10,\"array_test\":[\"TEST3\",\"TEST4\"]}", storedValue);
+        A.CallTo(() => repository.Instance).MustHaveHappenedOnceExactly();
     }
 }
