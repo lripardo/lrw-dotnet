@@ -2,7 +2,7 @@
 
 namespace LRW.Core.Configuration;
 
-public sealed class KeyConfiguration(IConfigSource source) : IKeyConfiguration
+public sealed class KeyedConfig(IConfigSource source) : IKeyedConfig
 {
     public Value this[Key key]
     {

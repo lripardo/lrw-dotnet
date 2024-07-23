@@ -2,7 +2,7 @@
 using LRW.Core.Configuration;
 using LRW.Core.Helpers;
 
-namespace LRW.Tests.Core;
+namespace LRW.UnitTests.Core;
 
 public class HelpersTests
 {

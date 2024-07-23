@@ -1,6 +1,6 @@
 ﻿namespace LRW.Core.Configuration;
 
-public interface IKeyConfiguration
+public interface IKeyedConfig
 {
     Value this[Key key] { get; }
 }
