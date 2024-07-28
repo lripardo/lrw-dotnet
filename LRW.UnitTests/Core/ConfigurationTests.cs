@@ -51,6 +51,9 @@ public class ConfigurationTests
     [InlineData("A__")]
     [InlineData("A B")]
     [InlineData(" A")]
+    [InlineData("a_b")]
+    [InlineData("a_B")]
+    [InlineData("A_b")]
     public void NewInstance_ThrowArgumentException_WhenInvalidName(string name)
     {
         Assert.Throws<ArgumentException>(() => new KeyWithNoValidation(name));
