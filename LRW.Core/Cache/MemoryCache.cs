@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using FluentValidation;
 using LRW.Core.Date;
 
 namespace LRW.Core.Cache;
@@ -22,6 +23,8 @@ public class MemoryCache<T>(IDateTimeResolver dateTimeResolver) : ICache<T>
 
     public void Set(string key, T value, TimeSpan duration)
     {
+        if (duration.Ticks < 0) throw new ValidationException("Negative duration");
+
         _dictionary[key] = new MemoryCacheItem<T>(value, duration.Ticks != 0 ? dateTimeResolver.Now.Add(duration) : null);
     }
 

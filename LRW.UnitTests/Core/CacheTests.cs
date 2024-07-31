@@ -3,6 +3,7 @@ using FakeItEasy;
 using LRW.Core.Cache;
 using LRW.Core.Date;
 using System.Reflection;
+using FluentValidation;
 
 namespace LRW.UnitTests.Core;
 
@@ -140,6 +141,69 @@ public class CacheTests
         //Assert
         Assert.Null(result);
         Assert.Throws<KeyNotFoundException>(() => cache.GetDictionary()["TEST5"]);
+
+        A.CallTo(() => dateResolver.Now).MustHaveHappenedOnceExactly();
+    }
+
+    [Fact]
+    public void Get_MustReturnsObject_WhenDateExpiresIsBiggerThanNow()
+    {
+        //Arrange
+        var dateResolver = A.Fake<IDateTimeResolver>();
+        var cache = new MemoryCache<string>(dateResolver);
+        cache.GetDictionary()["TEST6"] = new MemoryCacheItem<string>("MY VALUE 6", new DateTime(1000));
+
+        A.CallTo(() => dateResolver.Now).Returns(new DateTime(999));
+
+        //Act
+        var result = cache.Get("TEST6");
+
+        //Assert
+        Assert.Equal("MY VALUE 6", result);
+
+        A.CallTo(() => dateResolver.Now).MustHaveHappenedOnceExactly();
+    }
+
+    [Fact]
+    public void Get_MustReturnsObject_WhenDateExpiresIsEqualsToNow()
+    {
+        //Arrange
+        var dateResolver = A.Fake<IDateTimeResolver>();
+        var cache = new MemoryCache<string>(dateResolver);
+        cache.GetDictionary()["TEST7"] = new MemoryCacheItem<string>("MY VALUE 7", new DateTime(1000));
+
+        A.CallTo(() => dateResolver.Now).Returns(new DateTime(1000));
+
+        //Act
+        var result = cache.Get("TEST7");
+
+        //Assert
+        Assert.Equal("MY VALUE 7", result);
+
+        A.CallTo(() => dateResolver.Now).MustHaveHappenedOnceExactly();
+    }
+
+    [Fact]
+    public void Get_MustReturnsNull_WhenKeyNotFound()
+    {
+        //Arrange
+        var cache = new MemoryCache<string>(A.Fake<IDateTimeResolver>());
+
+        //Act
+        var result = cache.Get("TEST8");
+
+        //Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void Set_ShouldThrowValidationException_WhenTimestampIsNegative()
+    {
+        //Arrange
+        var cache = new MemoryCache<string>(A.Fake<IDateTimeResolver>());
+
+        //Act
+        Assert.Throws<ValidationException>(() => cache.Set("TEST9", "MY VALUE 9", new TimeSpan(-1)));
     }
 
     #endregion
