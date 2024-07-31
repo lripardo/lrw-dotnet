@@ -9,7 +9,9 @@ namespace LRW.IntegrationTests.Cache;
 
 public sealed class RedisFixture : IAsyncLifetime
 {
-    public ConnectionMultiplexer Connection { get; private set; } = null!;
+    private RedisConnection _repository = null!;
+    
+    public ConnectionMultiplexer Connection => _repository.Instance;
 
     private readonly IContainer _container = new ContainerBuilder()
         .WithImage("redis:alpine3.15")
@@ -21,7 +23,9 @@ public sealed class RedisFixture : IAsyncLifetime
     {
         await _container.StartAsync();
 
-        Connection = await ConnectionMultiplexer.ConnectAsync(new ConfigurationOptions() { EndPoints = { { "127.0.0.1", 6379 } } });
+        var configSource = new DictionaryConfigSource() { { "REDIS_HOST", "127.0.0.1" }, { "REDIS_PORT", "6379" } };
+
+        _repository = new RedisConnection(new KeyedConfig(configSource));
     }
 
     public Task DisposeAsync()

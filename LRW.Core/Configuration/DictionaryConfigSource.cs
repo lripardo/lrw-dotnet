@@ -1,14 +1,12 @@
 ﻿namespace LRW.Core.Configuration;
 
-public sealed class DictionaryConfigSource(Dictionary<string, string> config) : IConfigSource
+public sealed class DictionaryConfigSource() : Dictionary<string, string>, IConfigSource
 {
     public string Get(string key)
     {
-        return config[key];
+        TryGetValue(key, out var value);
+        return value ?? "";
     }
 
-    public Task<string> GetAsync(string key)
-    {
-        return Task.FromResult(Get(key));
-    }
+    public Task<string> GetAsync(string key) => Task.FromResult(Get(key));
 }
