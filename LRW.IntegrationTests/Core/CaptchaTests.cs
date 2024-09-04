@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using LRW.Core.Captcha;
+using LRW.Core.Communication;
 using LRW.Core.Configuration;
 using LRW.Core.Date;
 using Xunit.Abstractions;
@@ -35,5 +36,16 @@ public class CaptchaTests(ITestOutputHelper output)
 
         //Act and Assert
         await Assert.ThrowsAsync<ValidationException>(() => hcaptcha.Validate(new HCaptchaInput() { Response = response, SiteKey = ValidSiteKey, RemoteIp = ValidRemoteIp }));
+    }
+
+    [Fact]
+    public async Task HCaptcha_Validate_MustThrowValidationExceptionOnInvalidSiteKey()
+    {
+        //Arrange
+        var src = new DictionaryConfigSource() { { "HCAPTCHA_SECRET", ValidSecret }, { "HCAPTCHA_VERIFY_SITE_KEY", "ANY DIFFERENT KEY"} };
+        var hcaptcha = new HCaptchaValidator(new KeyedConfig(src), new XUnitLogger(output), new SystemDateTimeResolver());
+
+        //Act and Assert
+        await Assert.ThrowsAsync<ValidationException>(() => hcaptcha.Validate(new HCaptchaInput() { Response = ValidResponse, SiteKey = ValidSiteKey, RemoteIp = ValidRemoteIp }));
     }
 }
