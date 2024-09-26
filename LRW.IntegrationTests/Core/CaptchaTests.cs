@@ -1,6 +1,6 @@
-﻿using FluentValidation;
+﻿using FakeItEasy;
+using FluentValidation;
 using LRW.Core.Captcha;
-using LRW.Core.Communication;
 using LRW.Core.Configuration;
 using LRW.Core.Date;
 using Xunit.Abstractions;
@@ -42,8 +42,33 @@ public class CaptchaTests(ITestOutputHelper output)
     public async Task HCaptcha_Validate_MustThrowValidationExceptionOnInvalidSiteKey()
     {
         //Arrange
-        var src = new DictionaryConfigSource() { { "HCAPTCHA_SECRET", ValidSecret }, { "HCAPTCHA_VERIFY_SITE_KEY", "ANY DIFFERENT KEY"} };
+        var src = new DictionaryConfigSource() { { "HCAPTCHA_SECRET", ValidSecret }, { "HCAPTCHA_VERIFY_SITE_KEY", "ANY DIFFERENT KEY" } };
         var hcaptcha = new HCaptchaValidator(new KeyedConfig(src), new XUnitLogger(output), new SystemDateTimeResolver());
+
+        //Act and Assert
+        await Assert.ThrowsAsync<ValidationException>(() => hcaptcha.Validate(new HCaptchaInput() { Response = ValidResponse, SiteKey = ValidSiteKey, RemoteIp = ValidRemoteIp }));
+    }
+
+    [Fact]
+    public async Task HCaptcha_Validate_MustThrowValidationExceptionOnInvalidHostname()
+    {
+        //Arrange
+        var src = new DictionaryConfigSource() { { "HCAPTCHA_SECRET", ValidSecret }, { "HCAPTCHA_CLIENT_HOSTNAME", "ANY DIFFERENT HOSTNAME" } };
+        var hcaptcha = new HCaptchaValidator(new KeyedConfig(src), new XUnitLogger(output), new SystemDateTimeResolver());
+
+        //Act and Assert
+        await Assert.ThrowsAsync<ValidationException>(() => hcaptcha.Validate(new HCaptchaInput() { Response = ValidResponse, SiteKey = ValidSiteKey, RemoteIp = ValidRemoteIp }));
+    }
+
+    [Fact]
+    public async Task HCaptcha_Validate_MustThrowValidationExceptionOnExpiredChallenge()
+    {
+        //Arrange
+        var src = new DictionaryConfigSource() { { "HCAPTCHA_SECRET", ValidSecret }, { "HCAPTCHA_EXPIRATION_CHALLENGE", "1" } };
+        var dateTimeResolver = A.Fake<IDateTimeResolver>();
+        var hcaptcha = new HCaptchaValidator(new KeyedConfig(src), new XUnitLogger(output), dateTimeResolver);
+
+        A.CallTo(() => dateTimeResolver.Now).Returns(DateTime.MaxValue);
 
         //Act and Assert
         await Assert.ThrowsAsync<ValidationException>(() => hcaptcha.Validate(new HCaptchaInput() { Response = ValidResponse, SiteKey = ValidSiteKey, RemoteIp = ValidRemoteIp }));

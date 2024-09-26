@@ -35,7 +35,7 @@ public sealed class HCaptchaValidator(IKeyedConfig config, ILogger logger, IDate
 
     public class ExpirationChallenge : Key
     {
-        public ExpirationChallenge() : base("HCAPTCHA_EXPIRATION_CHALLENGE", "60", ["Time in seconds", "Value 0 means no expiration check"])
+        public ExpirationChallenge() : base("HCAPTCHA_EXPIRATION_CHALLENGE", "0", ["Time in seconds", "Value 0 means no expiration check"])
         {
             RuleFor(x => x.Int).GreaterThanOrEqualTo(0).LessThanOrEqualTo(86400);
         }
@@ -63,12 +63,12 @@ public sealed class HCaptchaValidator(IKeyedConfig config, ILogger logger, IDate
 
         var payload = new Dictionary<string, string> { ["secret"] = _secret, ["response"] = input.Response };
 
-        if (input.RemoteIp != null)
+        if (!string.IsNullOrEmpty(input.RemoteIp))
         {
             payload.Add("remoteip", input.RemoteIp);
         }
 
-        if (input.SiteKey != null)
+        if (!string.IsNullOrEmpty(input.SiteKey))
         {
             payload.Add("sitekey", input.SiteKey);
         }
