@@ -19,7 +19,7 @@ public sealed class Value(string value)
         }
         catch (Exception ex)
         {
-            var validationException = new ValidationException($"Cannot convert string {value} to type {typeof(T).FullName}");
+            var validationException = new ValidationException($"Cannot convert string '{value}' to type {typeof(T).FullName}");
 
             //TODO: FluentValidation library must implements inner exception constructor to avoid this reflection
             typeof(Exception).GetField("_innerException", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(validationException, ex);

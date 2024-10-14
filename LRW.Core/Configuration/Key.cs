@@ -1,28 +1,40 @@
-﻿using System.Text.RegularExpressions;
-using FluentValidation;
+﻿using FluentValidation;
 
 namespace LRW.Core.Configuration;
 
-public abstract partial class Key : AbstractValidator<Value>
+public abstract class Key : AbstractValidator<Value>
 {
-    [GeneratedRegex("^[A-Z]+(_?[A-Z]+)*$")]
-    private static partial Regex NameRegex();
-
     public string Name { get; }
     public string DefaultValue { get; }
     public string[] Documentation { get; }
     public string Version { get; }
 
+    private sealed class KeyValidator : AbstractValidator<Key>
+    {
+        public KeyValidator()
+        {
+            RuleFor(x => x.Name).NotEmpty().Matches("^[A-Z]+(_?[A-Z]+)*$");
+            RuleFor(x => x.Version).NotEmpty();
+        }
+    }
+
     protected Key(string name, string defaultValue, string[]? documentation = null, string version = "1.0.0")
     {
-        if (!NameRegex().IsMatch(name))
-        {
-            throw new ArgumentException($"Invalid key name {name}");
-        }
-
         Name = name;
         DefaultValue = defaultValue;
         Documentation = documentation ?? [];
         Version = version;
+
+        new KeyValidator().ValidateAndThrow(this);
+    }
+
+    protected override void OnRuleAdded(IValidationRule<Value> rule)
+    {
+        rule.PropertyName = nameof(KeyValidator);
+
+        //TODO: Change this when update FluentValidation to 12.0.0
+        //https://github.com/FluentValidation/FluentValidation/issues/2179
+        var setDisplayNameMethod = rule.GetType().GetMethod("SetDisplayName", [typeof(string)]);
+        setDisplayNameMethod?.Invoke(rule, [Name]);
     }
 }

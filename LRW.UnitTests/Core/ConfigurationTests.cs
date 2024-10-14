@@ -8,12 +8,11 @@ public class ConfigurationTests
 {
     #region Keys Definitions
 
-    private class KeyWithNoValidation(string name = "TEST", string defaultValue = "TEST") : Key(name, defaultValue, []);
+    private class KeyWithNoValidation(string name = "TEST", string defaultValue = "TEST", string version = "1.0.0") : Key(name, defaultValue, [], version);
 
     private class KeyWithRequiredValidation : Key
     {
-        public KeyWithRequiredValidation()
-            : base("TEST", "")
+        public KeyWithRequiredValidation() : base("TEST", "")
         {
             RuleFor(x => x.String).NotEmpty();
         }
@@ -21,8 +20,7 @@ public class ConfigurationTests
 
     private class KeyWithNumberValidation : Key
     {
-        public KeyWithNumberValidation()
-            : base("TEST", "1")
+        public KeyWithNumberValidation() : base("TEST", "1")
         {
             RuleFor(x => x.Int).GreaterThan(0).LessThan(100);
         }
@@ -54,9 +52,15 @@ public class ConfigurationTests
     [InlineData("a_b")]
     [InlineData("a_B")]
     [InlineData("A_b")]
-    public void NewInstance_ThrowArgumentException_WhenInvalidName(string name)
+    public void NewInstance_ThrowValidationException_WhenInvalidName(string name)
     {
-        Assert.Throws<ArgumentException>(() => new KeyWithNoValidation(name));
+        Assert.Throws<ValidationException>(() => new KeyWithNoValidation(name));
+    }
+
+    [Fact]
+    public void NewInstance_ThrowValidationException_WhenEmptyVersion()
+    {
+        Assert.Throws<ValidationException>(() => new KeyWithNoValidation(version: ""));
     }
 
     #endregion
