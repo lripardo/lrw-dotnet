@@ -8,6 +8,9 @@ public abstract class Key : AbstractValidator<Value>
     public string DefaultValue { get; }
     public string[] Documentation { get; }
     public string Version { get; }
+    public string Type { get; private set; } = nameof(String);
+
+    private bool _typeAlreadyModified;
 
     private sealed class KeyValidator : AbstractValidator<Key>
     {
@@ -30,11 +33,22 @@ public abstract class Key : AbstractValidator<Value>
 
     protected override void OnRuleAdded(IValidationRule<Value> rule)
     {
-        rule.PropertyName = nameof(KeyValidator);
+        rule.PropertyName = "KeyValidationError";
 
         //TODO: Change this when update FluentValidation to 12.0.0
         //https://github.com/FluentValidation/FluentValidation/issues/2179
-        var setDisplayNameMethod = rule.GetType().GetMethod("SetDisplayName", [typeof(string)]);
-        setDisplayNameMethod?.Invoke(rule, [Name]);
+        rule.GetType().GetMethod("SetDisplayName", [typeof(string)])?.Invoke(rule, [Name]);
+
+        if (rule.TypeToValidate.Name != Type)
+        {
+            if (_typeAlreadyModified)
+            {
+                throw new ValidationException("The Type property can modified only once");
+            }
+
+            Type = rule.TypeToValidate.Name;
+        }
+
+        _typeAlreadyModified = true;
     }
 }

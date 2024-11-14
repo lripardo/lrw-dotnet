@@ -16,6 +16,7 @@ public static class EnvExampleBuilder
             var key = (Key)Activator.CreateInstance(implementation)!;
 
             builder.Append($"# Since version: {key.Version}{newLine}");
+            builder.Append($"# Type: {key.Type}{newLine}");
 
             foreach (var documentation in key.Documentation)
             {
